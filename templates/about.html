@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About PhotoVibe</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="/static/css/styles.css" rel="stylesheet">
+</head>
+<body class="min-h-screen pt-16">
+    <nav class="fixed top-0 left-0 w-full bg-white shadow-sm z-30">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold text-blue-500">PhotoVibe</a>
+            <div class="hidden md:flex gap-4 items-center">
+                <a href="/" class="text-gray-800 hover:text-blue-500 transition">Home</a>
+                <a href="/editor" class="text-gray-800 hover:text-blue-500 transition">Editor</a>
+                <a href="/about" class="text-gray-800 hover:text-blue-500 transition">About</a>
+                <button id="themeToggle" class="text-gray-800 hover:text-blue-500 transition">
+                    <svg id="themeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </button>
+            </div>
+            <button id="navToggle" class="md:hidden text-gray-800 hover:text-blue-500 transition">
+                <svg id="navIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        <div id="navMenu" class="hidden md:hidden absolute top-16 left-0 w-full bg-white shadow-md">
+            <div class="flex flex-col p-4 gap-2">
+                <a href="/" class="text-gray-800 hover:text-blue-500 transition">Home</a>
+                <a href="/editor" class="text-gray-800 hover:text-blue-500 transition">Editor</a>
+                <a href="/about" class="text-gray-800 hover:text-blue-500 transition">About</a>
+                <button id="themeToggleMobile" class="text-gray-800 hover:text-blue-500 transition flex items-center">
+                    <svg id="themeIconMobile" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    Toggle Theme
+                </button>
+            </div>
+        </div>
+    </nav>
+    <div class="container mx-auto py-8">
+        <h1 class="text-3xl font-bold text-center mb-6">Tentang PhotoVibe</h1>
+        <p class="text-center text-lg mb-8">PhotoVibe adalah aplikasi pengeditan foto yang dikembangkan untuk memudahkan pengguna membuat foto menakjubkan dengan alat canggih dan antarmuka ramah.</p>
+    </div>
+    <script src="/static/js/index.js"></script>
+</body>
+</html>

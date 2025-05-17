@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhotoVibe Editor</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="/static/css/editor.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800">
+    <nav class="bg-white shadow-sm p-4">
+        <div class="container mx-auto">
+            <a href="/" class="text-2xl font-bold text-blue-500">PhotoVibe</a>
+        </div>
+    </nav>
+    <div class="container mx-auto py-8">
+        <h1 class="text-3xl font-bold text-center mb-6">Edit Foto dengan Gaya</h1>
+        <div class="flex flex-col md:flex-row gap-4 max-w-6xl mx-auto">
+            <!-- Canvas -->
+            <div class="flex-1 bg-white rounded-lg p-4 shadow-sm relative">
+                <button id="toggleSidebar" class="absolute top-4 right-4 text-gray-600 hover:text-gray-800 transition md:hidden">
+                    <svg id="toggleIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <div class="flex justify-center mb-4">
+                    <svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8m-8 0l2-4m6 4l-2-4"></path>
+                    </svg>
+                </div>
+                <canvas id="canvas" class="w-full max-w-[70vw] mx-auto rounded-md border border-gray-200"></canvas>
+            </div>
+            <!-- Sidebar -->
+            <div id="sidebar" class="w-full md:w-80 bg-white rounded-lg p-4 shadow-sm space-y-4 hidden md:block transition-all duration-300">
+                <div>
+                    <a href="/" class="inline-flex items-center bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        Kembali
+                    </a>
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold mb-2 text-gray-800">Unggah Gambar</h3>
+                    <input type="file" id="imageLoader" accept="image/*" class="w-full p-2 bg-gray-100 rounded-md border border-gray-200 text-sm">
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold mb-2 text-gray-800">Filter</h3>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="applyFilter('grayscale')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Grayscale</button>
+                        <button onclick="applyFilter('sepia')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Sepia</button>
+                        <button onclick="applyFilter('vintage')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Vintage</button>
+                        <button onclick="applyFilter('blur')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Blur</button>
+                        <button onclick="applyFilter('invert')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Invert</button>
+                        <button onclick="applyFilter('saturate')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Saturate</button>
+                        <button onclick="applyFilter('cartoon')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Cartoon</button>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold mb-2 text-gray-800">Transformasi</h3>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="startCrop()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Crop</button>
+                        <button onclick="rotateImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Rotate</button>
+                        <button onclick="restoreOriginal()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Original</button>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold mb-2 text-gray-800">Peningkatan</h3>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="enhanceImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Enhance</button>
+                        <button onclick="denoiseImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Hapus Noise</button>
+                        <button onclick="restoreImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Restorasi</button>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold mb-2 text-gray-800">Utilitas</h3>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="clearImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Hapus</button>
+                        <button onclick="downloadImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Download</button>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label for="brightness" class="block text-sm font-medium text-gray-800">Brightness</label>
+                        <input type="range" id="brightness" min="0" max="200" value="100" class="w-full h-2 bg-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label for="contrast" class="block text-sm font-medium text-gray-800">Contrast</label>
+                        <input type="range" id="contrast" min="0" max="200" value="100" class="w-full h-2 bg-gray-300 rounded-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="cropOverlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden">
+        <div class="bg-white p-4 rounded-md max-w-[80vw] max-h-[80vh] overflow-auto">
+            <img id="cropImage" class="max-w-[80vw] max-h-[70vh] object-contain">
+            <div class="mt-4 flex justify-center space-x-4">
+                <button onclick="confirmCrop()" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition text-sm">Confirm</button>
+                <button onclick="cancelCrop()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition text-sm">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="fixed bottom-6 right-6 bg-blue-500 text-white p-3 rounded-md shadow-lg hidden transition duration-300">
+        <div class="toast-body text-sm font-semibold"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <script src="/static/js/editor.js"></script>
