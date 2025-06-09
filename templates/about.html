@@ -6,13 +6,196 @@
     <title>About PhotoVibe</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="/static/css/styles.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --card-bg: #f9fafb;
+            --button-bg: #3b82f6;
+            --button-text: #ffffff;
+            --border-color: #e5e7eb;
+            --neon-glow: rgba(59, 130, 246, 0.5);
+            --neon-glow-hover: rgba(59, 130, 246, 0.8);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1f2937;
+            --text-color: #ffffff;
+            --card-bg: #374151;
+            --button-bg: #60a5fa;
+            --button-text: #ffffff;
+            --border-color: #4b5563;
+            --neon-glow: rgba(96, 165, 250, 0.5);
+            --neon-glow-hover: rgba(96, 165, 250, 0.8);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        nav {
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .bg-white {
+            background-color: var(--card-bg) !important;
+        }
+
+        .text-gray-800 {
+            color: var(--text-color) !important;
+        }
+
+        .text-gray-600 {
+            color: var(--text-color) !important;
+            opacity: 0.7;
+        }
+
+        /* Atur ukuran foto tim */
+        .team-photo {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            transition: transform 0.6s ease, opacity 0.6s ease;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .team-photo.clicked {
+            transform: scale(1.1) rotate(360deg);
+            transition: transform 0.6s ease;
+        }
+
+        /* Animasi untuk semua bagian */
+        .animate-section {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .animate-section.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animasi khusus untuk foto tim */
+        .team-photo-container .team-photo {
+            opacity: 0;
+            transform: scale(0.8) rotate(-10deg);
+        }
+
+        .team-photo-container.in-view .team-photo {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        /* Animasi khusus untuk teks "Tim Kami" */
+        .team-text {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .team-text.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Bingkai modern untuk foto tim */
+        .team-photo-container {
+            position: relative;
+            border-radius: 15px;
+            padding: 10px;
+            background: var(--card-bg);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .team-photo-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Efek neon glow dan border animasi */
+        .team-photo-container::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 17px;
+            background: linear-gradient(45deg, #3b82f6, #9333ea, #3b82f6);
+            background-size: 200%;
+            z-index: -1;
+            animation: gradientBorder 5s linear infinite;
+            box-shadow: 0 0 10px var(--neon-glow);
+            opacity: 0.6;
+            transition: opacity 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .team-photo-container:hover::before {
+            opacity: 1;
+            box-shadow: 0 0 20px var(--neon-glow-hover);
+        }
+
+        /* Animasi untuk border gradien bergerak */
+        @keyframes gradientBorder {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Efek geometris subtil */
+        .team-photo-container::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            width: 20px;
+            height: 20px;
+            border-top: 2px solid #3b82f6;
+            border-left: 2px solid #3b82f6;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .team-photo-container:hover::after {
+            opacity: 1;
+        }
+
+        .team-photo-container .bottom-right {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            border-bottom: 2px solid #9333ea;
+            border-right: 2px solid #9333ea;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .team-photo-container:hover .bottom-right {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body class="min-h-screen pt-16">
-    <nav class="fixed top-0 left-0 w-full bg-white shadow-sm z-30">
+    <nav class="fixed top-0 left-0 w-full bg-white shadow-sm z-30 animate-section" id="nav-section">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="/" class="text-2xl font-bold text-blue-500">PhotoVibe</a>
+            <a href="/dashboard" class="text-2xl font-bold text-blue-500">PhotoVibe</a>
             <div class="hidden md:flex gap-4 items-center">
-                <a href="/" class="text-gray-800 hover:text-blue-500 transition">Home</a>
+                <a href="/dashboard" class="text-gray-800 hover:text-blue-500 transition">Home</a>
                 <a href="/editor" class="text-gray-800 hover:text-blue-500 transition">Editor</a>
                 <a href="/about" class="text-gray-800 hover:text-blue-500 transition">About</a>
                 <button id="themeToggle" class="text-gray-800 hover:text-blue-500 transition">
@@ -27,9 +210,9 @@
                 </svg>
             </button>
         </div>
-        <div id="navMenu" class="hidden md:hidden absolute top-16 left-0 w-full bg-white shadow-md">
+        <div id="navMenu" class="hidden md:hidden absolute top-16 left-0 w-full bg-white shadow-md animate-section" id="nav-menu-section">
             <div class="flex flex-col p-4 gap-2">
-                <a href="/" class="text-gray-800 hover:text-blue-500 transition">Home</a>
+                <a href="/dashboard" class="text-gray-800 hover:text-blue-500 transition">Home</a>
                 <a href="/editor" class="text-gray-800 hover:text-blue-500 transition">Editor</a>
                 <a href="/about" class="text-gray-800 hover:text-blue-500 transition">About</a>
                 <button id="themeToggleMobile" class="text-gray-800 hover:text-blue-500 transition flex items-center">
@@ -41,10 +224,140 @@
             </div>
         </div>
     </nav>
-    <div class="container mx-auto py-8">
-        <h1 class="text-3xl font-bold text-center mb-6">Tentang PhotoVibe</h1>
-        <p class="text-center text-lg mb-8">PhotoVibe adalah aplikasi pengeditan foto yang dikembangkan untuk memudahkan pengguna membuat foto menakjubkan dengan alat canggih dan antarmuka ramah.</p>
+    <div class="container mx-auto py-8 pt-20">
+        <div class="mb-8 animate-section" id="svg-top-section">
+            <svg class="w-full h-48 md:h-60" viewBox="0 0 800 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 200 C100 220, 150 180, 200 200 C250 220, 300 180, 350 200" stroke="#9CA3AF" stroke-width="2" opacity="0.3"/>
+                <path d="M400 220 C450 240, 500 200, 550 220 C600 240, 650 200, 700 220" stroke="#9CA3AF" stroke-width="2" opacity="0.3"/>
+                <path d="M150 100 C200 80, 250 120, 300 100 C350 80, 400 120, 450 100" stroke="#9CA3AF" stroke-width="2" opacity="0.3"/>
+                <circle cx="100" cy="120" r="30" stroke="#9CA3AF" stroke-width="2" fill="none" opacity="0.4"/>
+                <circle cx="300" cy="150" r="25" stroke="#9CA3AF" stroke-width="2" fill="none" opacity="0.4"/>
+                <circle cx="500" cy="130" r="35" stroke="#9CA3AF" stroke-width="2" fill="none" opacity="0.4"/>
+                <circle cx="650" cy="160" r="20" stroke="#9CA3AF" stroke-width="2" fill="none" opacity="0.4"/>
+                <circle cx="200" cy="80" r="15" stroke="#9CA3AF" stroke-width="2" fill="none" opacity="0.4"/>
+                <path d="M100 50 C130 40, 160 60, 190 50" stroke="#9CA3AF" stroke-width="2" opacity="0.3"/>
+                <path d="M600 80 C630 60, 660 100, 690 80" stroke="#9CA3AF" stroke-width="2" opacity="0.3"/>
+            </svg>
+        </div>
+        <div class="animate-section" id="about-section">
+            <h1 class="text-3xl font-bold text-center mb-6">Tentang PhotoVibe</h1>
+            <p class="text-center text-lg mb-8">PhotoVibe adalah aplikasi pengeditan foto yang dikembangkan untuk memudahkan pengguna membuat foto menakjubkan dengan alat canggih dan antarmuka ramah.</p>
+        </div>
+        <div class="mb-8 animate-section" id="svg-middle-section">
+            <svg class="w-full h-32 md:h-40" viewBox="0 0 800 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M30 150 C60 160, 90 140, 120 150 C150 160, 180 140, 210 150" stroke="#9CA3AF" stroke-width="1.5" opacity="0.3"/>
+                <path d="M240 160 C270 170, 300 150, 330 160 C360 170, 390 150, 420 160" stroke="#9CA3AF" stroke-width="1.5" opacity="0.3"/>
+                <path d="M450 140 C480 130, 510 150, 540 140 C570 130, 600 150, 630 140" stroke="#9CA3AF" stroke-width="1.5" opacity="0.3"/>
+                <circle cx="80" cy="90" r="15" stroke="#9CA3AF" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <circle cx="200" cy="110" r="12" stroke="#9CA3AF" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <circle cx="350" cy="100" r="18" stroke="#9CA3AF" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <circle cx="500" cy="120" r="10" stroke="#9CA3AF" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <circle cx="650" cy="90" r="14" stroke="#9CA3AF" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <path d="M50 50 C70 40, 90 60, 110 50" stroke="#9CA3AF" stroke-width="1.5" opacity="0.3"/>
+                <path d="M700 60 C720 50, 740 70, 760 60" stroke="#9CA3AF" stroke-width="1.5" opacity="0.3"/>
+            </svg>
+        </div>
+        <div class="max-w-3xl mx-auto text-lg mb-8 animate-section" id="team-section">
+            <div class="team-text">
+                <h2 class="text-2xl font-semibold mb-4 text-center">Tim Kami</h2>
+                <p class="text-center italic mb-6">Di balik layar PhotoVibe, ada trio visioner yang mengubah ide menjadi karya nyata dengan semangat dan dedikasi tanpa batas.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-4 rounded-lg shadow-md flex flex-col items-center team-photo-container relative">
+                    <img src="/static/images/afrilia.jpg" alt="Afrilia Elin" class="team-photo rounded-full mb-3" onclick="animatePhoto(this)">
+                    <span class="bottom-right"></span>
+                    <h3 class="text-xl font-semibold">Afrilia Elin</h3>
+                    <p class="text-gray-600">Pengembang Utama</p>
+                    <p>Pengembang inti yang merancang dan membangun PhotoVibe dari awal.</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md flex flex-col items-center team-photo-container relative">
+                    <img src="/static/images/lasri.jpg" alt="Lasri Everyday Sihotang" class="team-photo rounded-full mb-3" onclick="animatePhoto(this)">
+                    <span class="bottom-right"></span>
+                    <h3 class="text-xl font-semibold">Lasri Sihotang</h3>
+                    <p class="text-gray-600">Pengembang</p>
+                    <p>Arsitek fitur inovatif yang memastikan setiap detail berjalan mulus dan sempurna.</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md flex flex-col items-center team-photo-container relative">
+                    <img src="/static/images/rossya.jpg" alt="Rossya Diva Anwar" class="team-photo rounded-full mb-3" onclick="animatePhoto(this)">
+                    <span class="bottom-right"></span>
+                    <h3 class="text-xl font-semibold">Rossya Diva Anwar</h3>
+                    <p class="text-gray-600">Pengembang</p>
+                    <p>Penyusun data cerdas yang menerjemahkan angka menjadi strategi masa depan.</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-8 animate-section" id="svg-bottom-section">
+            <svg class="w-full h-32 md:h-40" viewBox="0 0 800 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 140 C50 150, 80 130, 110 140 C140 150, 170 130, 200 140" stroke="#9CA3AF" stroke-width="1.5" opacity="0.3"/>
+                <path d="M230 150 C260 160, 290 140, 320 150 C350 160, 380 140, 410 150" stroke="#9CA3AF" stroke-width="1.5" opacity="0.3"/>
+                <path d="M440 130 C470 120, 500 140, 530 130 C560 120, 590 140, 620 130" stroke="#9CA3AF" stroke-width="1.5" opacity="0.3"/>
+                <circle cx="60" cy="80" r="12" stroke="#9CA3AF" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <circle cx="180" cy="100" r="10" stroke="#9CA3AF" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <circle cx="330" cy="90" r="15" stroke="#9CA3AF" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <circle cx="480" cy="110" r="8" stroke="#9CA3AF" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <circle cx="630" cy="80" r="12" stroke="#9CA3AF" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <path d="M40 40 C60 30, 80 50, 100 40" stroke="#9CA3AF" stroke-width="1.5" opacity="0.3"/>
+                <path d="M700 60 C720 50, 740 70, 760 60" stroke="#9CA3AF" stroke-width="1.5" opacity="0.3"/>
+            </svg>
+        </div>
+        <footer class="bg-white py-4 text-center border-t border-gray-200 mt-8 animate-section" id="footer-section">
+            <p class="text-gray-600 text-sm">© 2025 BEM STMIK Pelita Nusantara. All rights reserved.</p>
+        </footer>
     </div>
     <script src="/static/js/index.js"></script>
+    <script>
+        // Fungsi untuk memeriksa apakah elemen berada dalam viewport
+        function isInViewport(element) {
+            const rect = element.getBoundingClientRect();
+            const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+            return (
+                rect.top < windowHeight &&
+                rect.bottom > 0
+            );
+        }
+
+        // Fungsi untuk menangani animasi saat scroll
+        function handleScroll() {
+            const sections = document.querySelectorAll('.animate-section');
+            sections.forEach(section => {
+                if (isInViewport(section)) {
+                    section.classList.add('in-view');
+                } else {
+                    section.classList.remove('in-view');
+                }
+            });
+
+            // Animasi khusus untuk foto tim
+            const photoContainers = document.querySelectorAll('.team-photo-container');
+            photoContainers.forEach(container => {
+                if (isInViewport(container)) {
+                    container.classList.add('in-view');
+                } else {
+                    container.classList.remove('in-view');
+                }
+            });
+
+            // Animasi khusus untuk teks "Tim Kami"
+            const teamText = document.querySelector('.team-text');
+            if (teamText && isInViewport(teamText)) {
+                teamText.classList.add('in-view');
+            } else if (teamText) {
+                teamText.classList.remove('in-view');
+            }
+        }
+
+        // Fungsi animasi saat gambar diklik
+        function animatePhoto(photo) {
+            photo.classList.add('clicked');
+            setTimeout(() => {
+                photo.classList.remove('clicked');
+            }, 600);
+        }
+
+        // Tambahkan event listener untuk scroll
+        window.addEventListener('scroll', handleScroll);
+        // Jalankan sekali saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', handleScroll);
+    </script>
 </body>
 </html>

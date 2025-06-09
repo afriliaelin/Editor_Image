@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +7,195 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="/static/css/editor.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --card-bg: #f9fafb;
+            --button-bg: #3b82f6;
+            --button-text: #ffffff;
+            --border-color: #e5e7eb;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1f2937;
+            --text-color: #ffffff;
+            --card-bg: #374151;
+            --button-bg: #60a5fa;
+            --button-text: #ffffff;
+            --border-color: #4b5563;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        nav {
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .bg-white {
+            background-color: var(--card-bg) !important;
+        }
+
+        .bg-gray-100 {
+            background-color: var(--bg-color) !important;
+        }
+
+        .text-gray-800 {
+            color: var(--text-color) !important;
+        }
+
+        .text-gray-600 {
+            color: var(--text-color) !important;
+            opacity: 0.7;
+        }
+
+        button.bg-blue-500 {
+            background-color: var(--button-bg) !important;
+            color: var(--button-text) !important;
+        }
+
+        button.bg-gray-600 {
+            background-color: var(--button-bg) !important;
+            color: var(--button-text) !important;
+        }
+
+        button.bg-blue-500:hover, button.bg-gray-600:hover {
+            background-color: var(--button-bg, #2563eb) !important;
+            filter: brightness(0.9);
+        }
+
+        #canvas {
+            border-color: var(--border-color) !important;
+        }
+
+        input[type="range"] {
+            background: var(--border-color) !important;
+            accent-color: var(--button-bg);
+        }
+
+        /* Accordion Styling */
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background-color: var(--border-color);
+        }
+
+        .accordion-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .accordion-header svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-header.active svg {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            background-color: var(--bg-color);
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+
+        /* Button Styling */
+        .feature-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+
+        .feature-button:hover {
+            transform: translateY(-2px);
+            background-color: var(--button-bg, #2563eb);
+            filter: brightness(0.9);
+        }
+
+        /* Icon Styling */
+        .feature-icon {
+            margin-right: 8px;
+        }
+
+        /* Footer Styling */
+        footer {
+            margin-top: 2rem;
+            padding: 1rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-800">
-    <nav class="bg-white shadow-sm p-4">
-        <div class="container mx-auto">
+    <nav class="fixed top-0 left-0 w-full bg-white shadow-sm z-30">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <a href="/" class="text-2xl font-bold text-blue-500">PhotoVibe</a>
+            <div class="hidden md:flex gap-4 items-center">
+                <a href="/" class="text-gray-800 hover:text-blue-500 transition">Home</a>
+                <a href="/editor" class="text-gray-800 hover:text-blue-500 transition">Editor</a>
+                <a href="/about" class="text-gray-800 hover:text-blue-500 transition">About</a>
+                <button id="themeToggle" class="text-gray-800 hover:text-blue-500 transition">
+                    <svg id="themeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </button>
+            </div>
+            <button id="navToggle" class="md:hidden text-gray-800 hover:text-blue-500 transition">
+                <svg id="navIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        <div id="navMenu" class="hidden md:hidden absolute top-16 left-0 w-full bg-white shadow-md">
+            <div class="flex flex-col p-4 gap-2">
+                <a href="/" class="text-gray-800 hover:text-blue-500 transition">Home</a>
+                <a href="/editor" class="text-gray-800 hover:text-blue-500 transition">Editor</a>
+                <a href="/about" class="text-gray-800 hover:text-blue-500 transition">About</a>
+                <button id="themeToggleMobile" class="text-gray-800 hover:text-blue-500 transition flex items-center">
+                    <svg id="themeIconMobile" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    Toggle Theme
+                </button>
+            </div>
         </div>
     </nav>
-    <div class="container mx-auto py-8">
+    <div class="container mx-auto py-8 pt-24">
         <h1 class="text-3xl font-bold text-center mb-6">Edit Foto dengan Gaya</h1>
         <div class="flex flex-col md:flex-row gap-4 max-w-6xl mx-auto">
             <!-- Canvas -->
@@ -44,56 +225,207 @@
                     </a>
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold mb-2 text-gray-800">Unggah Gambar</h3>
+                    <h3 class="text-base font-semibold mb-2 text-gray-800 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                        Unggah Gambar
+                    </h3>
                     <input type="file" id="imageLoader" accept="image/*" class="w-full p-2 bg-gray-100 rounded-md border border-gray-200 text-sm">
                 </div>
-                <div>
-                    <h3 class="text-base font-semibold mb-2 text-gray-800">Filter</h3>
-                    <div class="grid grid-cols-1 gap-2">
-                        <button onclick="applyFilter('grayscale')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Grayscale</button>
-                        <button onclick="applyFilter('sepia')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Sepia</button>
-                        <button onclick="applyFilter('vintage')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Vintage</button>
-                        <button onclick="applyFilter('blur')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Blur</button>
-                        <button onclick="applyFilter('invert')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Invert</button>
-                        <button onclick="applyFilter('saturate')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Saturate</button>
-                        <button onclick="applyFilter('cartoon')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Cartoon</button>
+                <!-- Accordion for Filters -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4l2 4h4a2 2 0 012 2v8a4 4 0 01-4 4H7z"></path>
+                            </svg>
+                            Filter
+                        </h3>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="grid grid-cols-1 gap-2">
+                            <button onclick="applyFilter('grayscale')" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a8 8 0 01-8 8m8-8a8 8 0 00-8-8m8 8h.01M5 11a8 8 0 018-8m-8 8a8 8 0 008 8m-8 0h.01"></path>
+                                </svg>
+                                Grayscale
+                            </button>
+                            <button onclick="applyFilter('sepia')" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Sepia
+                            </button>
+                            <button onclick="applyFilter('vintage')" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Vintage
+                            </button>
+                            <button onclick="applyFilter('blur')" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                Blur
+                            </button>
+                            <button onclick="applyFilter('invert')" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                                Invert
+                            </button>
+                            <button onclick="applyFilter('saturate')" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                                Saturate
+                            </button>
+                            <button onclick="applyFilter('cartoon')" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a2 2 0 012-2h2a2 2 0 012 2v5m-4 0h4"></path>
+                                </svg>
+                                Cartoon
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-base font-semibold mb-2 text-gray-800">Transformasi</h3>
-                    <div class="grid grid-cols-1 gap-2">
-                        <button onclick="startCrop()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Crop</button>
-                        <button onclick="rotateImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Rotate</button>
-                        <button onclick="restoreOriginal()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Original</button>
+                <!-- Accordion for Transformations -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m-12 1h12m-4 4l4-4m-4 4l4 4"></path>
+                            </svg>
+                            Transformasi
+                        </h3>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="grid grid-cols-1 gap-2">
+                            <button onclick="startCrop()" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5h7m0 0v7m0-7l-7 7m-9-7h7m-7 0v7m0-7l7 7m-7 9h7m-7 0v-7m0 7l7-7"></path>
+                                </svg>
+                                Crop
+                            </button>
+                            <button onclick="rotateImage()" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Rotate
+                            </button>
+                            <button onclick="restoreOriginal()" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Original
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-base font-semibold mb-2 text-gray-800">Peningkatan</h3>
-                    <div class="grid grid-cols-1 gap-2">
-                        <button onclick="enhanceImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Enhance</button>
-                        <button onclick="denoiseImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Hapus Noise</button>
-                        <button onclick="restoreImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Restorasi</button>
+                <!-- Accordion for Enhancements -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 9.143l-5.714 2.286 2.286 5.714-6.857-2.286L8.429 21 10.714 15.286l-5.714-2.286L11.143 5.714z"></path>
+                            </svg>
+                            Peningkatan
+                        </h3>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="grid grid-cols-1 gap-2">
+                            <button onclick="enhanceImage()" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 9.143l-5.714 2.286 2.286 5.714-6.857-2.286L8.429 21 10.714 15.286l-5.714-2.286L11.143 5.714z"></path>
+                                </svg>
+                                Enhance
+                            </button>
+                            <button onclick="denoiseImage()" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12l4-4m-4 4l4 4"></path>
+                                </svg>
+                                Hapus Noise
+                            </button>
+                            <button onclick="restoreImage()" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Restorasi
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-base font-semibold mb-2 text-gray-800">Utilitas</h3>
-                    <div class="grid grid-cols-1 gap-2">
-                        <button onclick="clearImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Hapus</button>
-                        <button onclick="downloadImage()" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition w-full text-sm">Download</button>
+                <!-- Accordion for Adjustments -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                            </svg>
+                            Penyesuaian
+                        </h3>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div class="accordion-content space-y-4">
+                        <div>
+                            <label for="brightness" class="block text-sm font-medium text-gray-800">Brightness</label>
+                            <input type="range" id="brightness" min="0" max="200" value="100" class="w-full h-2 bg-gray-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label for="contrast" class="block text-sm font-medium text-gray-800">Contrast</label>
+                            <input type="range" id="contrast" min="0" max="200" value="100" class="w-full h-2 bg-gray-300 rounded-lg">
+                        </div>
                     </div>
                 </div>
-                <div class="space-y-4">
-                    <div>
-                        <label for="brightness" class="block text-sm font-medium text-gray-800">Brightness</label>
-                        <input type="range" id="brightness" min="0" max="200" value="100" class="w-full h-2 bg-gray-300 rounded-lg">
+                <!-- Accordion for Utilities -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                            </svg>
+                            Utilitas
+                        </h3>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </div>
-                    <div>
-                        <label for="contrast" class="block text-sm font-medium text-gray-800">Contrast</label>
-                        <input type="range" id="contrast" min="0" max="200" value="100" class="w-full h-2 bg-gray-300 rounded-lg">
+                    <div class="accordion-content">
+                        <div class="grid grid-cols-1 gap-2">
+                            <button onclick="clearImage()" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                                Hapus
+                            </button>
+                            <button onclick="downloadImage()" class="feature-button text-sm">
+                                <svg class="w-4 h-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V3"></path>
+                                </svg>
+                                Download
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Footer -->
+        <footer>
+            <p>© 2025 PhotoVibe. All rights reserved.</p>
+        </footer>
     </div>
     <div id="cropOverlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden">
         <div class="bg-white p-4 rounded-md max-w-[80vw] max-h-[80vh] overflow-auto">
@@ -109,3 +441,30 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <script src="/static/js/editor.js"></script>
+    <script src="/static/js/index.js"></script>
+    <script>
+        // Accordion Functionality
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isActive = content.classList.contains('active');
+
+                // Tutup semua accordion content
+                document.querySelectorAll('.accordion-content').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.accordion-header').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                // Buka accordion yang diklik
+                if (!isActive) {
+                    content.classList.add('active');
+                    header.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

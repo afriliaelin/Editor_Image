@@ -7,6 +7,10 @@ const contrastSlider = document.getElementById('contrast');
 const sidebar = document.getElementById('sidebar');
 const toggleSidebar = document.getElementById('toggleSidebar');
 const toggleIcon = document.getElementById('toggleIcon');
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const themeToggleMobile = document.getElementById('themeToggleMobile');
+const themeIconMobile = document.getElementById('themeIconMobile');
 let originalImage;
 let initialImage;
 let cropper;
@@ -20,6 +24,8 @@ console.log("Brightness Slider:", brightnessSlider);
 console.log("Contrast Slider:", contrastSlider);
 console.log("Crop Overlay:", cropOverlay);
 console.log("Crop Image:", cropImage);
+console.log("Theme Toggle:", themeToggle);
+console.log("Theme Icon:", themeIcon);
 
 // Initialize sidebar state
 let isSidebarVisible = window.innerWidth >= 768 ? true : false;
@@ -28,7 +34,60 @@ if (localStorage.getItem('sidebarVisible')) {
 }
 updateSidebarState();
 
-// Event listeners
+// Initialize theme from localStorage
+const html = document.documentElement;
+const savedTheme = localStorage.getItem('theme') || 'light';
+html.setAttribute('data-theme', savedTheme);
+updateThemeStyles();
+updateThemeIcon(savedTheme);
+
+// Listen for theme changes in localStorage (triggered from other pages)
+window.addEventListener('storage', (event) => {
+    if (event.key === 'theme') {
+        const newTheme = event.newValue || 'light';
+        html.setAttribute('data-theme', newTheme);
+        updateThemeStyles();
+        updateThemeIcon(newTheme);
+    }
+});
+
+// Theme toggle for editor page
+themeToggle?.addEventListener('click', toggleTheme);
+themeToggleMobile?.addEventListener('click', toggleTheme);
+
+function toggleTheme() {
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeStyles();
+    updateThemeIcon(newTheme);
+}
+
+function updateThemeStyles() {
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+        if (canvas) canvas.style.borderColor = '#4b5563';
+        if (brightnessSlider) brightnessSlider.style.background = '#6b7280';
+        if (contrastSlider) contrastSlider.style.background = '#6b7280';
+        if (imageLoader) imageLoader.style.backgroundColor = '#4b5563';
+    } else {
+        if (canvas) canvas.style.borderColor = '#e5e7eb';
+        if (brightnessSlider) brightnessSlider.style.background = '#e5e7eb';
+        if (contrastSlider) contrastSlider.style.background = '#e5e7eb';
+        if (imageLoader) imageLoader.style.backgroundColor = '#f1f5f9';
+    }
+}
+
+function updateThemeIcon(theme) {
+    const iconPath = theme === 'light' 
+        ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>'
+        : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
+    if (themeIcon) themeIcon.innerHTML = iconPath;
+    if (themeIconMobile) themeIconMobile.innerHTML = iconPath;
+}
+
+// Event listeners for editor functionality
 if (imageLoader) {
     imageLoader.addEventListener('change', handleImage);
 } else {
@@ -58,7 +117,6 @@ function applyToCanvas(img, ctx, applyFilters = false) {
     canvas.width = dims.width;
     canvas.height = dims.height;
 
-    // Terapkan rotasi
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
     ctx.rotate(rotation * Math.PI / 180);
@@ -159,11 +217,9 @@ function applyFilter(filter) {
     const width = canvas.width;
     const height = canvas.height;
 
-    // Langkah 1: Buat salinan data untuk deteksi tepi
     const edgeData = new Uint8ClampedArray(data);
     const smoothedData = new Uint8ClampedArray(data);
 
-    // Langkah 2: Terapkan sedikit blur untuk mengurangi noise (sebelum deteksi tepi dan posterisasi)
     for (let i = 0; i < data.length; i += 4) {
         const x = (i / 4) % width;
         const y = Math.floor((i / 4) / width);
@@ -176,11 +232,10 @@ function applyFilter(filter) {
             smoothedData[idx] = (data[idx] + data[idxLeft] + data[idxRight] + data[idxUp] + data[idxDown]) / 5;
             smoothedData[idx + 1] = (data[idx + 1] + data[idxLeft + 1] + data[idxRight + 1] + data[idxUp + 1] + data[idxDown + 1]) / 5;
             smoothedData[idx + 2] = (data[idx + 2] + data[idxLeft + 2] + data[idxRight + 2] + data[idxUp + 2] + data[idxDown + 2]) / 5;
-            smoothedData[idx + 3] = data[idx + 3]; // Alpha tetap
+            smoothedData[idx + 3] = data[idx + 3];
         }
     }
 
-    // Langkah 3: Deteksi tepi dengan kernel Sobel (horizontal dan vertikal)
     const edgeMap = new Float32Array(width * height);
     for (let y = 1; y < height - 1; y++) {
         for (let x = 1; x < width - 1; x++) {
@@ -194,7 +249,6 @@ function applyFilter(filter) {
             const idxS = ((y + 1) * width + x) * 4;
             const idxSE = ((y + 1) * width + (x + 1)) * 4;
 
-            // Hitung grayscale untuk deteksi tepi
             const grayNW = (smoothedData[idxNW] + smoothedData[idxNW + 1] + smoothedData[idxNW + 2]) / 3;
             const grayN = (smoothedData[idxN] + smoothedData[idxN + 1] + smoothedData[idxN + 2]) / 3;
             const grayNE = (smoothedData[idxNE] + smoothedData[idxNE + 1] + smoothedData[idxNE + 2]) / 3;
@@ -204,14 +258,12 @@ function applyFilter(filter) {
             const grayS = (smoothedData[idxS] + smoothedData[idxS + 1] + smoothedData[idxS + 2]) / 3;
             const graySE = (smoothedData[idxSE] + smoothedData[idxSE + 1] + smoothedData[idxSE + 2]) / 3;
 
-            // Kernel Sobel
-            const gx = (grayNW * -1) + (grayNE * 1) + (grayW * -2) + (grayE * 2) + (graySW * -1) + (graySE * 1); // Horizontal
-            const gy = (grayNW * -1) + (grayN * -2) + (grayNE * -1) + (graySW * 1) + (grayS * 2) + (graySE * 1); // Vertikal
+            const gx = (grayNW * -1) + (grayNE * 1) + (grayW * -2) + (grayE * 2) + (graySW * -1) + (graySE * 1);
+            const gy = (grayNW * -1) + (grayN * -2) + (grayNE * -1) + (graySW * 1) + (grayS * 2) + (graySE * 1);
             edgeMap[y * width + x] = Math.sqrt(gx * gx + gy * gy);
         }
     }
 
-    // Langkah 4: Terapkan filter berdasarkan jenis
     for (let i = 0; i < data.length; i += 4) {
         const x = (i / 4) % width;
         const y = Math.floor((i / 4) / width);
@@ -253,13 +305,11 @@ function applyFilter(filter) {
             data[i + 1] = rgb[1];
             data[i + 2] = rgb[2];
         } else if (filter === 'cartoon') {
-            // Langkah 5: Terapkan efek kartun
             if (x > 0 && x < width - 1 && y > 0 && y < height - 1) {
                 const edge = edgeMap[y * width + x];
-                if (edge > 50) { // Ambang batas tepi
-                    data[i] = data[i + 1] = data[i + 2] = 0; // Garis hitam
+                if (edge > 50) {
+                    data[i] = data[i + 1] = data[i + 2] = 0;
                 } else {
-                    // Langkah 6: Posterisasi warna (lebih halus)
                     data[i] = Math.round(r / 40) * 40;
                     data[i + 1] = Math.round(g / 40) * 40;
                     data[i + 2] = Math.round(b / 40) * 40;
@@ -268,7 +318,6 @@ function applyFilter(filter) {
         }
     }
 
-    // Langkah 7: Terapkan blur ringan untuk menghaluskan hasil kartun (opsional)
     if (filter === 'cartoon') {
         const finalData = new Uint8ClampedArray(data);
         for (let i = 0; i < data.length; i += 4) {
@@ -283,7 +332,7 @@ function applyFilter(filter) {
                 data[i] = (finalData[idx] + finalData[idxLeft] + finalData[idxRight] + finalData[idxUp] + finalData[idxDown]) / 5;
                 data[i + 1] = (finalData[idx + 1] + finalData[idxLeft + 1] + finalData[idxRight + 1] + finalData[idxUp + 1] + finalData[idxDown + 1]) / 5;
                 data[i + 2] = (finalData[idx + 2] + finalData[idxLeft + 2] + finalData[idxRight + 2] + finalData[idxUp + 2] + finalData[idxDown + 2]) / 5;
-                data[i + 3] = finalData[idx + 3]; // Alpha tetap
+                data[i + 3] = finalData[idx + 3];
             }
         }
     }
@@ -303,7 +352,6 @@ function applyFilter(filter) {
     };
 }
 
-// Fungsi untuk mengonversi RGB ke HSL
 function rgbToHsl(r, g, b) {
     r /= 255; g /= 255; b /= 255;
     let max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -324,7 +372,6 @@ function rgbToHsl(r, g, b) {
     return [h, s, l];
 }
 
-// Fungsi untuk mengonversi HSL ke RGB
 function hslToRgb(h, s, l) {
     let r, g, b;
     if (s === 0) {

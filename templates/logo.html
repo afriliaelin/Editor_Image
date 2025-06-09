@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhotoVibe - Welcome</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .logo-container {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .logo {
+            width: 300px; /* Ukuran logo diperbesar dari 200px ke 300px */
+            height: auto;
+            animation: fadeInScale 1.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .logo-container:hover .logo {
+            filter: brightness(90%);
+            transition: filter 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container" onclick="window.location.href='/dashboard'">
+        <img src="/static/images/logo.png" alt="PhotoVibe Logo" class="logo">
+    </div>
+</body>
+</html>
